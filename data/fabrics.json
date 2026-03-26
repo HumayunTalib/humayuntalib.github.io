@@ -1,0 +1,120 @@
+[
+  {
+    "id": "nova-silk-01",
+    "category": "nova-silk",
+    "categoryLabel": "Nova Silk",
+    "name": "Nova Silk — Classic",
+    "desc": "A luxurious blend capturing the sheen and softness of pure silk with enhanced durability. Ideal for formal menswear and high-end tailoring.",
+    "badge": "Signature",
+    "badgeAccent": true,
+    "swatchClass": "fabric-card__swatch--nova-silk",
+    "specs": [
+      { "label": "Weight", "value": "120 gsm" },
+      { "label": "Width", "value": "58 in" },
+      { "label": "Composition", "value": "60% Viscose / 40% Polyester" }
+    ]
+  },
+  {
+    "id": "nova-silk-02",
+    "category": "nova-silk",
+    "categoryLabel": "Nova Silk",
+    "name": "Nova Silk — Matte",
+    "desc": "A subdued finish variant of our Nova Silk — reduced lustre for understated daywear and bespoke suit linings.",
+    "badge": null,
+    "swatchClass": "fabric-card__swatch--nova-silk",
+    "specs": [
+      { "label": "Weight", "value": "115 gsm" },
+      { "label": "Width", "value": "58 in" },
+      { "label": "Composition", "value": "55% Viscose / 45% Polyester" }
+    ]
+  },
+  {
+    "id": "cross-slub-01",
+    "category": "cross-slub",
+    "categoryLabel": "Cross Slub",
+    "name": "Cross Slub — Charcoal",
+    "desc": "Woven with deliberate textural irregularities that give depth and distinct character. Perfect for those who value understated sophistication.",
+    "badge": "Signature",
+    "badgeAccent": true,
+    "swatchClass": "fabric-card__swatch--cross-slub",
+    "specs": [
+      { "label": "Weight", "value": "180 gsm" },
+      { "label": "Width", "value": "60 in" },
+      { "label": "Composition", "value": "100% Cotton Slub" }
+    ]
+  },
+  {
+    "id": "cross-slub-02",
+    "category": "cross-slub",
+    "categoryLabel": "Cross Slub",
+    "name": "Cross Slub — Natural",
+    "desc": "An undyed construction showcasing the raw beauty of slub weave. Available for custom dyeing to specification.",
+    "badge": "Custom Dye",
+    "badgeAccent": false,
+    "swatchClass": "fabric-card__swatch--neps-slub",
+    "specs": [
+      { "label": "Weight", "value": "175 gsm" },
+      { "label": "Width", "value": "60 in" },
+      { "label": "Composition", "value": "100% Cotton Slub" }
+    ]
+  },
+  {
+    "id": "mohair-01",
+    "category": "mohair",
+    "categoryLabel": "Mohair Blend",
+    "name": "Mohair Blend — Camel",
+    "desc": "A premium Mohair blend offering exceptional softness and natural lustre. Sourced under ethically certified supply chains.",
+    "badge": "Certified",
+    "badgeAccent": false,
+    "swatchClass": "fabric-card__swatch--mohair",
+    "specs": [
+      { "label": "Weight", "value": "220 gsm" },
+      { "label": "Width", "value": "58 in" },
+      { "label": "Composition", "value": "70% Mohair / 30% Wool" }
+    ]
+  },
+  {
+    "id": "dyed-yarn-01",
+    "category": "dyed-yarn",
+    "categoryLabel": "Dyed Yarn",
+    "name": "Dyed Yarn Fabric — Forest",
+    "desc": "Constructed from our in-house dyed yarn, providing rich, consistent colour from fibre to finish. Deep tones with excellent washfastness.",
+    "badge": null,
+    "swatchClass": "fabric-card__swatch--dyed-yarn",
+    "specs": [
+      { "label": "Weight", "value": "160 gsm" },
+      { "label": "Width", "value": "58 in" },
+      { "label": "Composition", "value": "100% Combed Cotton" }
+    ]
+  },
+  {
+    "id": "neps-slub-01",
+    "category": "neps-slub",
+    "categoryLabel": "Neps Slub",
+    "name": "Neps Slub — Ecru",
+    "desc": "Specialty yarn construction featuring nep inclusions for a naturally textured, artisanal aesthetic. A heritage offering from Humayun Ibrahim Textile.",
+    "badge": "Heritage",
+    "badgeAccent": false,
+    "swatchClass": "fabric-card__swatch--neps-slub",
+    "specs": [
+      { "label": "Weight", "value": "150 gsm" },
+      { "label": "Width", "value": "60 in" },
+      { "label": "Composition", "value": "100% Cotton Neps" }
+    ]
+  },
+  {
+    "id": "neps-slub-02",
+    "category": "neps-slub",
+    "categoryLabel": "Neps Slub",
+    "name": "Neps Slub — Melange",
+    "desc": "A blended melange variant combining dyed and undyed fibres for a subtle two-tone visual depth. Available in custom colour combinations.",
+    "badge": "Custom Dye",
+    "badgeAccent": false,
+    "swatchClass": "fabric-card__swatch--neps-slub",
+    "specs": [
+      { "label": "Weight", "value": "155 gsm" },
+      { "label": "Width", "value": "60 in" },
+      { "label": "Composition", "value": "85% Cotton / 15% Polyester" }
+    ]
+  }
+]
