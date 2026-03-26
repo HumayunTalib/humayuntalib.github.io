@@ -203,10 +203,35 @@
           <button class="filter-btn" data-filter="neps-slub" aria-pressed="false">Neps Slub</button>
         </div>
 
-        <!-- Fabric cards grid — populated by JS from fabrics.json -->
-        <div class="fabric-grid" id="fabric-grid" role="list" aria-label="Fabric catalog" aria-live="polite">
-          <!-- Cards injected by main.js -->
-          <p class="fabric-grid__loading" aria-live="polite">Loading fabric library…</p>
+        <!-- Fabric Carousel -->
+        <div class="carousel-container">
+          <div class="carousel-wrapper">
+
+            <!-- Prev button -->
+            <button class="carousel-btn carousel-btn--prev" id="carousel-prev" aria-label="Previous fabrics">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+
+            <!-- Scrolling viewport -->
+            <div class="carousel-viewport" id="carousel-viewport">
+              <div class="carousel-track" id="carousel-track" role="list" aria-label="Fabric catalog" aria-live="polite">
+                <!-- Slides injected by main.js -->
+              </div>
+            </div>
+
+            <!-- Next button -->
+            <button class="carousel-btn carousel-btn--next" id="carousel-next" aria-label="Next fabrics">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M7.5 5L12.5 10L7.5 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+
+          </div>
+
+          <!-- Dot indicators -->
+          <div class="carousel-dots" id="carousel-dots" aria-label="Carousel position"></div>
         </div>
 
       </div>
@@ -359,7 +384,7 @@
             <address class="contact-details" aria-label="Contact information">
               <div class="contact-item">
                 <span class="contact-item__label">Email</span>
-                <a href="mailto:contact@enzolhr.com" class="contact-item__value">contact@enzolhr.com</a>
+                <a href="/cdn-cgi/l/email-protection#690a06071d080a1d290c07130605011b470a0604" class="contact-item__value"><span class="__cf_email__" data-cfemail="55363a3b2134362115303b2f3a393d277b363a38">[email&#160;protected]</span></a>
               </div>
               <div class="contact-item">
                 <span class="contact-item__label">Phone</span>
@@ -506,6 +531,7 @@
       </div>
 
     </div>
+
   </footer>
 
   <!-- Scripts -->
