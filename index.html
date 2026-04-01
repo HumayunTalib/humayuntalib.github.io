@@ -87,8 +87,8 @@
 
         <!-- Main headline -->
         <h1 class="hero-headline">
-          <span class="hero-headline__line">Weaving</span>
-          <span class="hero-headline__line hero-headline__line--italic">Modern Luxury.</span>
+          <span class="hero-headline__line">Wholesale Fabric Supplier</span>
+          <span class="hero-headline__line hero-headline__line--italic">In Faisalabad</span>
         </h1>
 
         <!-- Sub-copy -->
@@ -238,122 +238,209 @@
     </section>
 
 
-    <!-- ── SECTION 4: PRODUCTION ESTIMATOR ────────────────────── -->
-    <section class="section estimator" id="estimator" aria-label="Production cost estimator">
+    <!-- ── SECTION 4: FABRIC COST CALCULATOR ──────────────── -->
+    <section class="section estimator" id="estimator" aria-label="Fabric cost calculator">
       <div class="container">
 
-        <div class="estimator-layout">
+        <div class="section-header">
+          <p class="eyebrow">Mill Calculator</p>
+          <h2 class="section-heading">Fabric Cost Calculator</h2>
+          <p class="section-subheading">Enter your construction specs and rates to generate a full cost breakdown and printable cost sheet.</p>
+        </div>
 
-          <!-- Left: Form inputs -->
-          <div class="estimator-form-panel">
-            <p class="eyebrow">Plan Your Order</p>
-            <h2 class="section-heading">Production Estimator</h2>
-            <p class="body-copy">Enter your fabric requirements and get an instant ballpark estimate. Final quotes are confirmed via RFQ.</p>
+        <form id="calc-form" novalidate autocomplete="off">
 
-            <form class="estimator-form" id="estimator-form" novalidate aria-label="Production estimator form">
+          <!-- ── ROW 1: Reference ── -->
+          <div class="calc-row calc-row--ref">
+            <div class="form-group">
+              <label class="form-label" for="calc-client">Client / Buyer Name</label>
+              <input class="form-input calc-input" type="text" id="calc-client" name="client" placeholder="e.g. Al Haramain Textiles" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="calc-ref">Reference #</label>
+              <input class="form-input calc-input" type="text" id="calc-ref" name="ref" placeholder="e.g. ENZ-2025-001" />
+            </div>
+          </div>
 
-              <!-- Fabric type -->
+          <div class="calc-fieldsets">
+
+            <!-- ── FIELDSET 1: Construction ── -->
+            <fieldset class="calc-fieldset">
+              <legend class="calc-legend">Construction</legend>
+
               <div class="form-group">
-                <label class="form-label" for="est-fabric-type">Fabric Category</label>
-                <select class="form-select" id="est-fabric-type" name="fabricType" required>
-                  <option value="" disabled selected>Select a category…</option>
-                  <option value="nova-silk">Nova Silk</option>
-                  <option value="cross-slub">Cross Slub</option>
-                  <option value="mohair">Mohair Blend</option>
-                  <option value="dyed-yarn">Dyed Yarn</option>
-                  <option value="neps-slub">Neps Slub</option>
-                  <option value="custom">Custom Construction</option>
+                <label class="form-label" for="calc-yarn">Yarn Type</label>
+                <select class="form-select calc-select" id="calc-yarn" name="yarn" required>
+                  <option value="" disabled selected>Select yarn…</option>
+                  <option value="Mohair Blend">Mohair Blend</option>
+                  <option value="Dyed Yarn">Dyed Yarn</option>
+                  <option value="Neps Slub">Neps Slub</option>
                 </select>
               </div>
 
-              <!-- Quantity -->
               <div class="form-group">
-                <label class="form-label" for="est-quantity">Quantity (metres)</label>
-                <input class="form-input" type="number" id="est-quantity" name="quantity" min="500" max="10000000" placeholder="e.g. 5000" required />
-                <span class="form-hint">Minimum order: 500 metres</span>
+                <label class="form-label" for="calc-finish">Finishing</label>
+                <select class="form-select calc-select" id="calc-finish" name="finish">
+                  <option value="None">None (Greige / Raw)</option>
+                  <option value="Polyester Dyed">Polyester Dyed</option>
+                  <option value="Viscose Dyed">Viscose Dyed</option>
+                  <option value="Solid Dyed">Solid Dyed</option>
+                </select>
               </div>
 
-              <!-- Width -->
               <div class="form-group">
-                <label class="form-label" for="est-width">Fabric Width</label>
-                <select class="form-select" id="est-width" name="width" required>
+                <label class="form-label" for="calc-width">Width (inches)</label>
+                <select class="form-select calc-select" id="calc-width" name="width" required>
                   <option value="" disabled selected>Select width…</option>
-                  <option value="44">44 inches (112 cm)</option>
-                  <option value="58">58 inches (147 cm)</option>
-                  <option value="60">60 inches (152 cm)</option>
-                  <option value="72">72 inches (183 cm)</option>
+                  <option value="45">45 inches</option>
+                  <option value="60">60 inches</option>
+                  <option value="62">62 inches</option>
                 </select>
               </div>
 
-              <!-- Finish -->
               <div class="form-group">
-                <label class="form-label" for="est-finish">Finishing Treatment</label>
-                <select class="form-select" id="est-finish" name="finish">
-                  <option value="none">None (greige / raw)</option>
-                  <option value="bleached">Bleached</option>
-                  <option value="dyed">Solid Dyed</option>
-                  <option value="printed">Printed</option>
-                  <option value="coated">Coated / Laminated</option>
+                <label class="form-label" for="calc-reed">Reed</label>
+                <input class="form-input calc-input" type="number" id="calc-reed" name="reed"
+                  placeholder="e.g. 80" min="1" step="1" required />
+                <span class="form-hint">Common: 64, 72, 80, 102, 104</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="calc-pick">Pick (per inch)</label>
+                <input class="form-input calc-input" type="number" id="calc-pick" name="pick"
+                  placeholder="e.g. 60" min="1" step="1" required />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="calc-warp-count">Warp Count</label>
+                <input class="form-input calc-input" type="number" id="calc-warp-count" name="warpCount"
+                  placeholder="e.g. 40" min="2" step="0.5" required />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="calc-weft-count">Weft Count</label>
+                <input class="form-input calc-input" type="number" id="calc-weft-count" name="weftCount"
+                  placeholder="e.g. 40" min="1" step="0.5" required />
+              </div>
+
+            </fieldset>
+
+            <!-- ── FIELDSET 2: Rates ── -->
+            <fieldset class="calc-fieldset">
+              <legend class="calc-legend">Rates &amp; Costs (PKR)</legend>
+
+              <div class="form-group">
+                <label class="form-label" for="calc-warp-rate">Warp Rate (PKR / lb)</label>
+                <input class="form-input calc-input" type="number" id="calc-warp-rate" name="warpRate"
+                  placeholder="e.g. 500" min="0" step="0.01" required />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="calc-weft-rate">Weft Rate (PKR / lb)</label>
+                <input class="form-input calc-input" type="number" id="calc-weft-rate" name="weftRate"
+                  placeholder="e.g. 450" min="0" step="0.01" required />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="calc-conv-rate">Conversion Rate (PKR)</label>
+                <input class="form-input calc-input" type="number" id="calc-conv-rate" name="convRate"
+                  placeholder="e.g. 2.5" min="0" step="0.01" required />
+                <span class="form-hint">Per pick × loom conversion factor</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="calc-hook">Selvedge Hook Type</label>
+                <select class="form-select calc-select" id="calc-hook" name="hook">
+                  <option value="16 hook">16 Hook</option>
+                  <option value="32 hook" selected>32 Hook</option>
+                  <option value="72 hook">72 Hook</option>
                 </select>
               </div>
 
-              <button type="submit" class="btn btn--primary btn--full" id="est-submit">
-                Calculate Estimate
-              </button>
+              <div class="form-group">
+                <label class="form-label" for="calc-kinara">Kinara Rate (PKR / metre)</label>
+                <input class="form-input calc-input" type="number" id="calc-kinara" name="kinara"
+                  placeholder="e.g. 4" min="0" step="0.5" required />
+                <span class="form-hint">Agreed rate with loom operator (2–6 PKR typical)</span>
+              </div>
 
-            </form>
+              <div class="form-group form-group--checkbox">
+                <label class="checkbox-label">
+                  <input type="checkbox" id="calc-brokerage" name="brokerage" class="checkbox-input" />
+                  <span class="checkbox-custom" aria-hidden="true"></span>
+                  <span class="checkbox-text">Apply Brokerage (1%) &mdash; tick if working through a broker</span>
+                </label>
+              </div>
+
+            </fieldset>
+
+            <!-- ── FIELDSET 3: Order & FX ── -->
+            <fieldset class="calc-fieldset">
+              <legend class="calc-legend">Order &amp; FX</legend>
+
+              <div class="form-group">
+                <label class="form-label" for="calc-length">Fabric Length (metres)</label>
+                <input class="form-input calc-input" type="number" id="calc-length" name="length"
+                  placeholder="e.g. 5000" min="1" step="1" required />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="calc-bag-weight">Bag Weight</label>
+                <div class="calc-bag-row">
+                  <input class="form-input calc-input" type="number" id="calc-bag-weight" name="bagWeight"
+                    value="100" min="1" step="0.01" placeholder="100" />
+                  <div class="calc-unit-toggle">
+                    <span class="unit-label">lbs</span>
+                    <label class="toggle-switch" aria-label="Switch bag weight unit">
+                      <input type="checkbox" id="calc-bag-unit" />
+                      <span class="toggle-slider"></span>
+                    </label>
+                    <span class="unit-label" id="bag-unit-label">lbs</span>
+                  </div>
+                </div>
+                <span class="form-hint">Standard bag = 100 lbs. Switch to enter in kg.</span>
+              </div>
+
+              <!-- FX Rate display (read-only, auto-fetched) -->
+              <div class="form-group">
+                <label class="form-label">Live Exchange Rate</label>
+                <div class="fx-display-box">
+                  <span id="calc-fx-display" class="fx-rate-text">…</span>
+                </div>
+                <span class="fx-status" id="fx-status">Fetching…</span>
+              </div>
+
+            </fieldset>
+
+          </div><!-- /.calc-fieldsets -->
+
+          <div class="calc-submit-row">
+            <button type="submit" class="btn btn--primary" id="calc-submit">
+              Calculate Cost
+            </button>
           </div>
 
-          <!-- Right: Results panel -->
-          <div class="estimator-results-panel" id="estimator-results" aria-live="polite" aria-label="Estimate results">
+        </form>
 
-            <!-- Default idle state -->
-            <div class="results-idle" id="results-idle">
-              <div class="results-idle__icon" aria-hidden="true">◈</div>
-              <p class="results-idle__text">Your estimate will appear here</p>
-            </div>
+        <!-- ── RESULTS PANEL ── -->
+        <div id="calc-results" class="calc-results" hidden>
 
-            <!-- Results state (hidden until calculated) -->
-            <div class="results-output" id="results-output" hidden>
-              <p class="eyebrow">Your Estimate</p>
-
-              <div class="result-row">
-                <span class="result-row__label">Fabric Type</span>
-                <span class="result-row__value" id="res-fabric-type">—</span>
-              </div>
-              <div class="result-row">
-                <span class="result-row__label">Quantity</span>
-                <span class="result-row__value" id="res-quantity">—</span>
-              </div>
-              <div class="result-row">
-                <span class="result-row__label">Width</span>
-                <span class="result-row__value" id="res-width">—</span>
-              </div>
-              <div class="result-row">
-                <span class="result-row__label">Finishing</span>
-                <span class="result-row__value" id="res-finish">—</span>
-              </div>
-
-              <div class="result-divider" aria-hidden="true"></div>
-
-              <div class="result-row result-row--total">
-                <span class="result-row__label">Estimated Price Range</span>
-                <span class="result-row__value result-row__value--price" id="res-price">—</span>
-              </div>
-
-              <div class="result-row result-row--total">
-                <span class="result-row__label">Lead Time</span>
-                <span class="result-row__value" id="res-lead-time">—</span>
-              </div>
-
-              <p class="results-disclaimer">* Estimates are indicative. Final pricing confirmed via formal quotation.</p>
-
-              <a href="#rfq" class="btn btn--primary btn--full">Proceed to RFQ</a>
-            </div>
-
+          <!-- Currency Toggle -->
+          <div class="currency-toggle no-print">
+            <span class="currency-toggle__label">View in:</span>
+            <button class="currency-btn currency-btn--active" data-currency="PKR">PKR</button>
+            <button class="currency-btn" data-currency="USD">USD</button>
+            <button class="currency-btn" data-currency="CAD">CAD</button>
+            <button class="currency-btn" data-currency="AUD">AUD</button>
+            <button class="currency-btn" data-currency="AED">AED</button>
+            <button class="currency-btn" data-currency="IRR">IRR</button>
+            <button class="currency-btn" data-currency="AFN">AFN</button>
           </div>
+
+          <!-- Results injected by calculator.js -->
 
         </div>
+
       </div>
     </section>
 
@@ -384,7 +471,7 @@
             <address class="contact-details" aria-label="Contact information">
               <div class="contact-item">
                 <span class="contact-item__label">Email</span>
-                <a href="/cdn-cgi/l/email-protection#690a06071d080a1d290c07130605011b470a0604" class="contact-item__value"><span class="__cf_email__" data-cfemail="55363a3b2134362115303b2f3a393d277b363a38">[email&#160;protected]</span></a>
+                <a href="/cdn-cgi/l/email-protection#690a06071d080a1d290c07130605011b470a0604" class="contact-item__value"><span class="__cf_email__" data-cfemail="55363a3b2134362115303b2f3a393d277b363a38">info@enzolhr.com</span></a>
               </div>
               <div class="contact-item">
                 <span class="contact-item__label">Phone</span>
@@ -392,7 +479,7 @@
               </div>
               <div class="contact-item">
                 <span class="contact-item__label">Address</span>
-                <span class="contact-item__value">44 A HBFC Faisal Town, Lahore, Pakistan</span>
+                <span class="contact-item__value">Enzo Tower, Thokar Niaz Baig, Lahore</span>
               </div>
               <div class="contact-item">
                 <span class="contact-item__label">Web</span>
@@ -403,7 +490,7 @@
 
           <!-- Right: RFQ form -->
           <div class="rfq-form-wrapper">
-            <form class="rfq-form" id="rfq-form" novalidate aria-label="Request for quotation form" action="https://formspree.io/f/xnjoqwgv" method="POST"></form>
+            <form class="rfq-form" id="rfq-form" novalidate aria-label="Request for quotation form">
 
               <!-- Row: Name + Company -->
               <div class="form-row">
@@ -511,16 +598,6 @@
             <li><a href="#rfq">Request Quote</a></li>
           </ul>
         </nav>
-
-        <!-- Certifications column -->
-        <div class="footer-certs">
-          <h4 class="footer-nav__heading">Certifications</h4>
-          <ul class="footer-nav__list">
-            <li>OEKO-TEX® Standard 100</li>
-            <li>Control Union Certified</li>
-            <li>Better Cotton Member</li>
-          </ul>
-        </div>
 
       </div>
 
