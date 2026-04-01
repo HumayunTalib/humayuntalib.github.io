@@ -498,7 +498,7 @@ function doPrint() {
     /* Footer */
     '<div class="footer">' +
       '<span>ENZO by Humayun Ibrahim Textile &nbsp;|&nbsp; 44 A HBFC Faisal Town, Lahore, Pakistan</span>' +
-      '<span>contact@enzolhr.com &nbsp;|&nbsp; +92 321 8230266</span>' +
+      '<span>info@enzolhr.com &nbsp;|&nbsp; +92 321 8230266</span>' +
     '</div>' +
 
     '<p class="notice">* This is an indicative cost sheet. Final pricing subject to confirmation. Estimates are based on mill inputs at time of calculation.</p>' +
