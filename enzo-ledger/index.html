@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>ENZO Ledger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --indigo:#22304A;
+    --paper:#EDE7DA;
+    --paper-2:#E4DCC8;
+    --gold:#C68E17;
+    --olive:#4B7A51;
+    --rust:#A13D3D;
+    --line:#cdc3a6;
+    --white:#FBF9F2;
+    --ink-soft:#5a6a83;
+    --font-display:'Fraunces',serif;
+    --font-body:'IBM Plex Sans',sans-serif;
+    --font-mono:'IBM Plex Mono',monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--indigo);
+    font-family:var(--font-body);
+    font-size:15px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{font-family:var(--font-display);font-weight:600;margin:0 0 4px;}
+  a{color:inherit;text-decoration:none;}
+  .mono{font-family:var(--font-mono);}
+  .pos{color:var(--olive);}
+  .neg{color:var(--rust);}
+  button{font-family:inherit;cursor:pointer;}
+  input,select{font-family:inherit;font-size:14px;}
+
+  /* ---- layout shell ---- */
+  .topbar{
+    position:sticky;top:0;z-index:20;
+    display:flex;align-items:center;gap:20px;
+    background:var(--indigo);color:var(--paper);
+    padding:12px 24px;
+    box-shadow:0 2px 8px rgba(0,0,0,.15);
+  }
+  .brand{display:flex;align-items:baseline;gap:6px;font-family:var(--font-display);}
+  .brand-mark{font-size:22px;font-weight:600;letter-spacing:.04em;}
+  .brand-sub{font-size:14px;font-style:italic;color:var(--gold);}
+  .topnav{display:flex;gap:4px;margin-left:8px;}
+  .nav-link{padding:8px 14px;border-radius:5px;font-weight:500;font-size:14px;}
+  .nav-link:hover{background:rgba(255,255,255,.08);}
+  .topbar-spacer{flex:1;}
+  .app-main{max-width:1120px;margin:0 auto;padding:24px 24px 64px;}
+
+  /* ---- buttons ---- */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:6px;
+    padding:10px 18px;border-radius:6px;border:1.5px solid transparent;
+    font-size:14px;font-weight:600;line-height:1;white-space:nowrap;
+  }
+  .btn-primary{background:var(--indigo);color:var(--paper);}
+  .btn-primary:hover{background:#2c3d5c;}
+  .btn-ghost{background:transparent;color:var(--indigo);border-color:var(--line);}
+  .btn-ghost:hover{background:var(--paper-2);}
+  .btn.small{padding:6px 12px;font-size:12.5px;}
+
+  /* ---- quick add rows ---- */
+  .quick-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px;}
+  .quick-row.big .btn{padding:16px 22px;font-size:15px;flex:1 1 200px;}
+
+  /* ---- stat tiles ---- */
+  .stat-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:32px;}
+  .stat-tile{
+    flex:1 1 160px;background:var(--white);border:1px solid var(--line);
+    border-radius:8px;padding:16px 18px;
+  }
+  .stat-num{font-size:26px;font-weight:600;}
+  .stat-label{font-size:12.5px;color:var(--ink-soft);margin-top:4px;text-transform:uppercase;letter-spacing:.05em;}
+
+  .section-title{font-size:19px;margin:0 0 14px;padding-top:6px;border-top:1px dashed var(--line);padding-top:20px;}
+
+  /* ---- outstanding: book gutter ---- */
+  .outstanding-grid{display:flex;align-items:stretch;gap:0;margin-bottom:32px;}
+  .outstanding-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;}
+  .col-head{font-size:14px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+  .gutter{position:relative;width:28px;flex:0 0 28px;}
+  .gutter::before{
+    content:'';position:absolute;left:50%;top:0;bottom:0;
+    border-left:2px dashed var(--indigo);opacity:.35;transform:translateX(-50%);
+  }
+  .gutter::after{
+    content:'';position:absolute;left:50%;top:6px;bottom:6px;width:7px;
+    transform:translateX(-50%);
+    background-image:radial-gradient(circle,var(--gold) 1.4px,transparent 1.6px);
+    background-size:7px 15px;opacity:.55;
+  }
+  .outstanding-row{
+    display:flex;justify-content:space-between;gap:10px;
+    padding:9px 12px;border-radius:6px;background:var(--white);border:1px solid var(--line);
+  }
+  .outstanding-row:hover{border-color:var(--indigo);}
+  .op-name{font-weight:500;}
+  .op-amt{font-weight:600;}
+
+  /* ---- activity feed ---- */
+  .activity-feed{display:flex;flex-direction:column;gap:8px;}
+  .activity-row{
+    display:grid;grid-template-columns:auto 1fr auto auto;gap:14px;align-items:center;
+    padding:10px 14px;border-radius:6px;background:var(--white);border:1px solid var(--line);
+  }
+  .activity-row:hover{border-color:var(--indigo);}
+  .act-desc{font-size:14px;}
+  .act-amt{font-weight:600;}
+  .act-date{font-size:12.5px;color:var(--ink-soft);white-space:nowrap;}
+
+  /* ---- stamp badges ---- */
+  .stamp{
+    display:inline-block;padding:2px 9px;border:2px solid currentColor;border-radius:3px;
+    font-family:var(--font-mono);font-size:10px;font-weight:600;letter-spacing:.07em;
+    text-transform:uppercase;transform:rotate(-4deg);white-space:nowrap;
+  }
+  .stamp-purchase{color:var(--rust);}
+  .stamp-sale{color:var(--olive);}
+  .stamp-payment{color:var(--indigo);}
+  .stamp-routed{color:var(--gold);}
+
+  /* ---- badges (tags) ---- */
+  .badges{display:inline-flex;gap:5px;flex-wrap:wrap;}
+  .badge{
+    display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;
+    font-weight:600;letter-spacing:.02em;background:var(--paper-2);color:var(--indigo);
+  }
+  .badge-supplier{background:#f3e3c6;color:#7a5a12;}
+  .badge-buyer{background:#dbe6df;color:#33553a;}
+  .badge-broker{background:#e9d7d7;color:#7a2f2f;}
+  .badge-material{background:var(--paper-2);color:var(--ink-soft);}
+
+  /* ---- view head / filters ---- */
+  .view-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+  .filters{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:18px;}
+  .input{padding:9px 12px;border:1.5px solid var(--line);border-radius:6px;background:var(--white);min-width:220px;}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;}
+  .chip{
+    padding:6px 13px;border-radius:16px;border:1.5px solid var(--line);background:var(--white);
+    font-size:13px;font-weight:500;color:var(--ink-soft);
+  }
+  .chip.active{background:var(--indigo);border-color:var(--indigo);color:var(--paper);}
+
+  /* ---- party rows ---- */
+  .party-rows{display:flex;flex-direction:column;gap:8px;}
+  .party-row{
+    display:flex;justify-content:space-between;align-items:center;gap:14px;
+    padding:13px 16px;border-radius:8px;background:var(--white);border:1px solid var(--line);
+  }
+  .party-row:hover{border-color:var(--indigo);}
+  .pr-main{display:flex;flex-direction:column;gap:5px;}
+  .pr-name{font-weight:600;font-size:15.5px;}
+  .pr-bal{text-align:right;}
+  .bal-label{display:block;font-size:11px;color:var(--ink-soft);margin-top:2px;}
+
+  /* ---- forms / cards ---- */
+  .card{background:var(--white);border:1px solid var(--line);border-radius:10px;padding:24px;}
+  .form-card{max-width:560px;}
+  .field{margin-bottom:16px;}
+  .lbl{display:block;font-size:12.5px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft);margin-bottom:6px;}
+  .field input[type=text],.field input[type=number],.field input[type=date],.field select{
+    width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:6px;background:var(--paper);
+  }
+  .field input:focus,.field select:focus{outline:2px solid var(--gold);outline-offset:1px;}
+  .row-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+  .hint{font-size:12.5px;color:var(--ink-soft);margin:4px 0 0;}
+  .chip-check-group{display:flex;gap:8px;flex-wrap:wrap;}
+  .chip-check{
+    display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:16px;
+    border:1.5px solid var(--line);background:var(--paper);cursor:pointer;font-size:13.5px;
+  }
+  .chip-check input{accent-color:var(--indigo);}
+  .amount-preview{background:var(--paper);border:1px dashed var(--line);border-radius:6px;padding:10px 14px;}
+  .amount-out{font-size:20px;font-weight:600;}
+  .broker-fields{margin-top:-2px;}
+  .chk{display:flex;align-items:center;gap:8px;font-size:14px;}
+  .toggle-group{display:flex;gap:8px;}
+  .toggle-opt{
+    flex:1;padding:10px;border-radius:6px;border:1.5px solid var(--line);background:var(--paper);
+    font-size:13.5px;font-weight:500;color:var(--ink-soft);
+  }
+  .toggle-opt.active{background:var(--indigo);border-color:var(--indigo);color:var(--paper);}
+  .modal-actions{display:flex;justify-content:space-between;align-items:center;margin-top:22px;gap:10px;}
+  .modal-actions > div{display:flex;gap:8px;}
+
+  /* ---- party detail ---- */
+  .back-link{display:inline-block;margin-bottom:14px;font-size:13.5px;color:var(--ink-soft);}
+  .back-link:hover{color:var(--indigo);}
+  .party-head{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:18px;flex-wrap:wrap;}
+  .balance-card{text-align:right;}
+  .balance-num{font-family:var(--font-mono);font-size:30px;font-weight:600;}
+  .balance-label{font-size:12.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.04em;}
+  .ledger-legend{font-size:12.5px;color:var(--ink-soft);margin-bottom:10px;}
+
+  .table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--white);}
+  table.ledger-table{width:100%;border-collapse:collapse;min-width:640px;}
+  .ledger-table th{
+    text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);
+    padding:10px 14px;border-bottom:2px solid var(--indigo);white-space:nowrap;
+  }
+  .ledger-table td{padding:10px 14px;border-bottom:1px solid var(--line);font-size:14px;vertical-align:top;}
+  .ledger-table tr:last-child td{border-bottom:none;}
+  .ledger-table th.num,.ledger-table td.num{text-align:right;font-family:var(--font-mono);}
+  .ledger-table .note{font-size:12px;color:var(--ink-soft);margin-top:2px;}
+  .opening-row td{background:var(--paper-2);font-weight:600;}
+  .row-actions{text-align:right;}
+  .icon-btn{background:none;border:none;color:var(--ink-soft);font-size:14px;padding:4px 6px;border-radius:4px;}
+  .icon-btn:hover{background:var(--paper-2);color:var(--indigo);}
+  .empty{color:var(--ink-soft);font-size:14px;padding:18px;text-align:center;}
+
+  /* ---- dialogs ---- */
+  dialog{
+    border:none;border-radius:10px;padding:0;background:var(--paper);
+    box-shadow:0 12px 40px rgba(0,0,0,.3);width:min(560px,92vw);
+  }
+  dialog::backdrop{background:rgba(20,26,38,.55);}
+  dialog .modal-body,dialog form{padding:26px 26px 22px;}
+  .modal-title{font-size:21px;margin-bottom:16px;}
+
+  @media (max-width:720px){
+    .row-2,.row-3{grid-template-columns:1fr;}
+    .outstanding-grid{flex-direction:column;}
+    .gutter{display:none;}
+    .quick-row.big .btn{flex:1 1 100%;}
+    .topbar{flex-wrap:wrap;gap:10px;padding:12px 16px;}
+    .activity-row{grid-template-columns:auto 1fr;grid-template-rows:auto auto;}
+    .act-amt,.act-date{grid-column:2;}
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="#/dashboard">
+    <span class="brand-mark">ENZO</span><span class="brand-sub">Ledger</span>
+  </a>
+  <nav class="topnav">
+    <a class="nav-link" href="#/dashboard">Dashboard</a>
+    <a class="nav-link" href="#/parties">Parties</a>
+  </nav>
+  <span class="topbar-spacer"></span>
+  <button class="btn btn-ghost small" data-action="open-backup" style="border-color:rgba(255,255,255,.4);color:var(--paper);">Backup / Restore</button>
+</header>
+
+<main id="app" class="app-main"></main>
+
+<dialog id="txn-dialog"><div id="txn-dialog-body"></div></dialog>
+
+<dialog id="backup-dialog">
+  <div class="modal-body">
+    <h3 class="modal-title">Backup &amp; Restore</h3>
+    <p class="hint">Your ledger lives only in this browser (IndexedDB). Export a backup file regularly and keep a copy somewhere safe — a USB drive, cloud folder, or email to yourself. If the browser's data is ever cleared, an export is the only way back.</p>
+    <div class="modal-actions" style="justify-content:flex-start;">
+      <button type="button" class="btn btn-primary" data-action="export-backup">Export Backup (.json)</button>
+    </div>
+    <hr style="border:none;border-top:1px dashed var(--line);margin:22px 0;">
+    <p class="hint">Restoring a backup file <strong>replaces all current data</strong> in this app.</p>
+    <div class="field" style="margin-top:10px;">
+      <input type="file" id="import-file" accept="application/json">
+    </div>
+    <div class="modal-actions">
+      <span></span>
+      <div><button type="button" class="btn btn-ghost" data-action="close-modal">Close</button></div>
+    </div>
+  </div>
+</dialog>
+
+<script>
+(function(){
+'use strict';
+
+/* ================= IndexedDB ================= */
+var db;
+function idbOpen(){
+  return new Promise(function(resolve, reject){
+    var req = indexedDB.open('enzoLedgerDB', 1);
+    req.onupgradeneeded = function(e){
+      var d = e.target.result;
+      if (!d.objectStoreNames.contains('parties')) d.createObjectStore('parties', {keyPath:'id'});
+      if (!d.objectStoreNames.contains('transactions')){
+        var st = d.createObjectStore('transactions', {keyPath:'id'});
+        st.createIndex('date', 'date');
+      }
+    };
+    req.onsuccess = function(){ resolve(req.result); };
+    req.onerror = function(){ reject(req.error); };
+  });
+}
+function idbAll(store){
+  return new Promise(function(resolve, reject){
+    var req = db.transaction(store, 'readonly').objectStore(store).getAll();
+    req.onsuccess = function(){ resolve(req.result); };
+    req.onerror = function(){ reject(req.error); };
+  });
+}
+function idbPut(store, obj){
+  return new Promise(function(resolve, reject){
+    var tx = db.transaction(store, 'readwrite');
+    tx.objectStore(store).put(obj);
+    tx.oncomplete = function(){ resolve(); };
+    tx.onerror = function(){ reject(tx.error); };
+  });
+}
+function idbDelete(store, id){
+  return new Promise(function(resolve, reject){
+    var tx = db.transaction(store, 'readwrite');
+    tx.objectStore(store)['delete'](id);
+    tx.oncomplete = function(){ resolve(); };
+    tx.onerror = function(){ reject(tx.error); };
+  });
+}
+function idbClear(store){
+  return new Promise(function(resolve, reject){
+    var tx = db.transaction(store, 'readwrite');
+    tx.objectStore(store).clear();
+    tx.oncomplete = function(){ resolve(); };
+    tx.onerror = function(){ reject(tx.error); };
+  });
+}
+
+/* ================= State ================= */
+var PARTIES = [];
+var TXNS = [];
+var app = document.getElementById('app');
+var uiState = { search:'', tagFilter:new Set(), materialFilter:'all' };
+var TYPE_LABELS = {purchase:'Purchase', sale:'Sale', payment:'Payment', routed_payment:'Routed'};
+
+function uid(){
+  if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  return 'id-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2,10);
+}
+function cap(s){ return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+function esc(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
+}
+function fmtMoney(n){
+  n = n || 0;
+  var abs = Math.round(Math.abs(n));
+  return 'Rs ' + abs.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+function fmtQty(n){
+  if (n == null) return '';
+  return (Math.round(n * 100) / 100).toString();
+}
+function todayStr(){
+  var d = new Date();
+  var pad = function(n){ return String(n).padStart(2,'0'); };
+  return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate());
+}
+function fmtDate(iso){
+  if (!iso) return '';
+  var parts = iso.split('-').map(Number);
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return parts[2] + ' ' + months[parts[1]-1] + ' ' + parts[0];
+}
+function balanceLabel(n){
+  if (Math.abs(n) < 0.005) return 'Settled';
+  return n > 0 ? 'Owes ENZO' : 'ENZO owes';
+}
+function stampClass(type){
+  return type === 'routed_payment' ? 'routed' : type;
+}
+
+/* ================= Ledger math ================= */
+function partiesById(){
+  var map = {};
+  PARTIES.forEach(function(p){ map[p.id] = p; });
+  return map;
+}
+function ledgerEntriesFor(t, P){
+  var nm = function(id){ return (P[id] && P[id].name) || 'Unknown party'; };
+  var entries = [];
+  if (t.type === 'purchase' || t.type === 'sale'){
+    var isSale = t.type === 'sale';
+    entries.push({
+      partyId: t.partyId,
+      delta: isSale ? t.amount : -t.amount,
+      desc: (isSale ? 'Sale — ' : 'Purchase — ') + cap(t.material) + ' (' + fmtQty(t.qty) + t.unit + ')'
+    });
+    if (t.brokerId){
+      entries.push({
+        partyId: t.brokerId,
+        delta: -(t.commission || 0),
+        desc: 'Commission — ' + (isSale ? 'Sale to ' : 'Purchase from ') + nm(t.partyId)
+      });
+    }
+  } else if (t.type === 'payment'){
+    entries.push({
+      partyId: t.partyId,
+      delta: t.direction === 'in' ? -t.amount : t.amount,
+      desc: t.direction === 'in' ? 'Payment received' : 'Payment paid'
+    });
+  } else if (t.type === 'routed_payment'){
+    entries.push({ partyId: t.payerId, delta: -t.amount, desc: 'Payment routed to ' + nm(t.receiverId) });
+    entries.push({ partyId: t.receiverId, delta: t.amount, desc: 'Payment routed from ' + nm(t.payerId) });
+  }
+  return entries.map(function(e){
+    return Object.assign({}, e, { date: t.date, txnId: t.id, note: t.note, createdAt: t.createdAt });
+  });
+}
+function describeTxn(t, P){
+  var nm = function(id){ return (P[id] && P[id].name) || 'Unknown party'; };
+  switch (t.type){
+    case 'purchase': return 'Purchase — ' + cap(t.material) + ' (' + fmtQty(t.qty) + t.unit + ') from ' + nm(t.partyId);
+    case 'sale': return 'Sale — ' + cap(t.material) + ' (' + fmtQty(t.qty) + t.unit + ') to ' + nm(t.partyId);
+    case 'payment': return t.direction === 'in' ? 'Payment received from ' + nm(t.partyId) : 'Payment paid to ' + nm(t.partyId);
+    case 'routed_payment': return 'Routed payment — ' + nm(t.payerId) + ' → ' + nm(t.receiverId);
+  }
+  return '';
+}
+function ledgerFor(partyId, P){
+  var out = [];
+  TXNS.forEach(function(t){
+    ledgerEntriesFor(t, P).forEach(function(en){
+      if (en.partyId === partyId) out.push(en);
+    });
+  });
+  out.sort(function(a,b){
+    if (a.date < b.date) return -1;
+    if (a.date > b.date) return 1;
+    return a.createdAt - b.createdAt;
+  });
+  return out;
+}
+function computeBalance(party, P){
+  var sum = 0;
+  ledgerFor(party.id, P).forEach(function(e){ sum += e.delta; });
+  return party.openingBalance + sum;
+}
+function partyInUse(id){
+  return TXNS.some(function(t){
+    return t.partyId === id || t.brokerId === id || t.payerId === id || t.receiverId === id;
+  });
+}
+
+/* ================= Router ================= */
+function route(){
+  if (!location.hash){ location.hash = '#/dashboard'; return; }
+  var h = location.hash.replace(/^#\//,'');
+  var seg = h.split('/');
+  if (seg[0] === 'dashboard') renderDashboard();
+  else if (seg[0] === 'parties' && seg[1] === 'new') renderPartyForm(null);
+  else if (seg[0] === 'parties') renderPartyList();
+  else if (seg[0] === 'party' && seg[1] && seg[2] === 'edit') renderPartyForm(seg[1]);
+  else if (seg[0] === 'party' && seg[1]) renderPartyDetail(seg[1]);
+  else renderDashboard();
+  window.scrollTo(0,0);
+}
+window.addEventListener('hashchange', route);
+
+/* ================= Dashboard ================= */
+function renderDashboard(){
+  var P = partiesById();
+  var today = todayStr();
+  var todaysTxns = TXNS.filter(function(t){ return t.date === today; });
+  var received = TXNS.filter(function(t){ return t.type==='payment' && t.direction==='in' && t.date===today; })
+                      .reduce(function(s,t){ return s+t.amount; }, 0);
+  var paid = TXNS.filter(function(t){ return t.type==='payment' && t.direction==='out' && t.date===today; })
+                 .reduce(function(s,t){ return s+t.amount; }, 0);
+
+  var withBal = PARTIES.map(function(p){ return {p:p, bal:computeBalance(p,P)}; });
+  var owedToEnzo = withBal.filter(function(x){ return x.bal > 0.005; }).sort(function(a,b){ return b.bal-a.bal; });
+  var enzoOwes = withBal.filter(function(x){ return x.bal < -0.005; }).sort(function(a,b){ return a.bal-b.bal; });
+
+  var recent = TXNS.slice().sort(function(a,b){ return b.createdAt - a.createdAt; }).slice(0,20);
+
+  app.innerHTML =
+    '<div class="quick-row big">' +
+      '<button class="btn btn-primary" data-action="open-purchase">+ New Purchase</button>' +
+      '<button class="btn btn-primary" data-action="open-sale">+ New Sale</button>' +
+      '<button class="btn btn-primary" data-action="open-payment">+ Record Payment</button>' +
+      '<button class="btn btn-primary" data-action="open-routed">+ Route Payment</button>' +
+    '</div>' +
+    '<div class="stat-row">' +
+      '<div class="stat-tile"><div class="stat-num mono">'+todaysTxns.length+'</div><div class="stat-label">Entries Today</div></div>' +
+      '<div class="stat-tile"><div class="stat-num mono pos">'+fmtMoney(received)+'</div><div class="stat-label">Received Today</div></div>' +
+      '<div class="stat-tile"><div class="stat-num mono neg">'+fmtMoney(paid)+'</div><div class="stat-label">Paid Today</div></div>' +
+    '</div>' +
+    '<h3 class="section-title" style="border-top:none;padding-top:0;">Outstanding</h3>' +
+    '<div class="outstanding-grid">' +
+      '<div class="outstanding-col">' +
+        '<h4 class="col-head pos">Owed to ENZO</h4>' +
+        (owedToEnzo.length ? owedToEnzo.map(outstandingRow).join('') : '<p class="empty">Nothing outstanding.</p>') +
+      '</div>' +
+      '<div class="gutter"></div>' +
+      '<div class="outstanding-col">' +
+        '<h4 class="col-head neg">ENZO Owes</h4>' +
+        (enzoOwes.length ? enzoOwes.map(outstandingRow).join('') : '<p class="empty">Nothing outstanding.</p>') +
+      '</div>' +
+    '</div>' +
+    '<h3 class="section-title">Recent Activity</h3>' +
+    '<div class="activity-feed">' +
+      (recent.length ? recent.map(function(t){ return activityRow(t,P); }).join('') : '<p class="empty">No activity yet — log your first entry above.</p>') +
+    '</div>';
+}
+function outstandingRow(x){
+  return '<a class="outstanding-row" href="#/party/'+x.p.id+'">' +
+    '<span class="op-name">'+esc(x.p.name)+'</span>' +
+    '<span class="op-amt mono">'+fmtMoney(Math.abs(x.bal))+'</span>' +
+  '</a>';
+}
+function activityRow(t, P){
+  var href = '#/party/' + (t.partyId || t.payerId || '');
+  return '<a class="activity-row" href="'+href+'">' +
+    '<span class="stamp stamp-'+stampClass(t.type)+'">'+TYPE_LABELS[t.type]+'</span>' +
+    '<span class="act-desc">'+esc(describeTxn(t,P))+'</span>' +
+    '<span class="act-amt mono">'+fmtMoney(t.amount)+'</span>' +
+    '<span class="act-date">'+fmtDate(t.date)+'</span>' +
+  '</a>';
+}
+
+/* ================= Party list ================= */
+function filteredParties(){
+  var P = partiesById();
+  var list = PARTIES.slice();
+  var q = (uiState.search || '').trim().toLowerCase();
+  if (q) list = list.filter(function(p){ return p.name.toLowerCase().indexOf(q) !== -1; });
+  if (uiState.tagFilter.size) list = list.filter(function(p){ return p.tags.some(function(t){ return uiState.tagFilter.has(t); }); });
+  if (uiState.materialFilter && uiState.materialFilter !== 'all'){
+    list = list.filter(function(p){ return p.material === uiState.materialFilter || p.material === 'both'; });
+  }
+  return list.map(function(p){ return {p:p, bal:computeBalance(p,P)}; })
+             .sort(function(a,b){ return a.p.name.localeCompare(b.p.name); });
+}
+function renderPartyList(){
+  app.innerHTML =
+    '<div class="view-head"><h2>Parties</h2><a class="btn btn-primary" href="#/parties/new">+ Add Party</a></div>' +
+    '<div class="filters">' +
+      '<input type="text" id="search-input" class="input" placeholder="Search parties…" value="'+esc(uiState.search)+'">' +
+      '<div class="chips">' +
+        ['supplier','buyer','broker'].map(function(t){
+          return '<button type="button" class="chip'+(uiState.tagFilter.has(t)?' active':'')+'" data-action="toggle-filter-tag" data-tag="'+t+'">'+cap(t)+'</button>';
+        }).join('') +
+      '</div>' +
+      '<div class="chips">' +
+        ['all','yarn','fabric'].map(function(v){
+          return '<button type="button" class="chip'+(uiState.materialFilter===v?' active':'')+'" data-action="set-material-filter" data-val="'+v+'">'+(v==='all'?'All materials':cap(v))+'</button>';
+        }).join('') +
+      '</div>' +
+    '</div>' +
+    '<div id="party-rows"></div>';
+  var si = document.getElementById('search-input');
+  si.addEventListener('input', function(e){ uiState.search = e.target.value; updatePartyRows(); });
+  updatePartyRows();
+}
+function updatePartyRows(){
+  var rows = document.getElementById('party-rows');
+  if (!rows) return;
+  var list = filteredParties();
+  rows.innerHTML = list.length ? partyRowsHtml(list) : '<p class="empty">No parties match. Try a different search or filter.</p>';
+}
+function partyRowsHtml(list){
+  return '<div class="party-rows">' + list.map(function(x){
+    return '<a class="party-row" href="#/party/'+x.p.id+'">' +
+      '<div class="pr-main">' +
+        '<span class="pr-name">'+esc(x.p.name)+'</span>' +
+        '<span class="badges">' +
+          x.p.tags.map(function(t){ return '<span class="badge badge-'+t+'">'+cap(t)+'</span>'; }).join('') +
+          '<span class="badge badge-material">'+cap(x.p.material)+'</span>' +
+        '</span>' +
+      '</div>' +
+      '<div class="pr-bal">' +
+        '<span class="mono '+(x.bal>0?'pos':x.bal<0?'neg':'')+'">'+fmtMoney(Math.abs(x.bal))+'</span>' +
+        '<span class="bal-label">'+balanceLabel(x.bal)+'</span>' +
+      '</div>' +
+    '</a>';
+  }).join('') + '</div>';
+}
+
+/* ================= Party detail ================= */
+function renderPartyDetail(id){
+  var p = PARTIES.find(function(x){ return x.id === id; });
+  if (!p){ location.hash = '#/parties'; return; }
+  var P = partiesById();
+  var entries = ledgerFor(p.id, P);
+  var running = p.openingBalance;
+  var rows = entries.map(function(en){
+    running += en.delta;
+    return Object.assign({}, en, {running:running});
+  });
+  var bal = running;
+
+  app.innerHTML =
+    '<a class="back-link" href="#/parties">← All Parties</a>' +
+    '<div class="party-head">' +
+      '<div>' +
+        '<h2>'+esc(p.name)+'</h2>' +
+        '<div class="badges">' +
+          p.tags.map(function(t){ return '<span class="badge badge-'+t+'">'+cap(t)+'</span>'; }).join('') +
+          '<span class="badge badge-material">'+cap(p.material)+'</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="balance-card">' +
+        '<div class="balance-num '+(bal>0?'pos':bal<0?'neg':'')+'">'+fmtMoney(Math.abs(bal))+'</div>' +
+        '<div class="balance-label">'+balanceLabel(bal)+'</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="quick-row">' +
+      '<button class="btn btn-primary" data-action="open-purchase" data-party="'+p.id+'">+ Purchase</button>' +
+      '<button class="btn btn-primary" data-action="open-sale" data-party="'+p.id+'">+ Sale</button>' +
+      '<button class="btn btn-primary" data-action="open-payment" data-party="'+p.id+'">+ Payment</button>' +
+      '<button class="btn btn-primary" data-action="open-routed" data-party="'+p.id+'">+ Route Payment</button>' +
+      '<a class="btn btn-ghost" href="#/party/'+p.id+'/edit">Edit Party</a>' +
+      '<button class="btn btn-ghost" data-action="delete-party" data-id="'+p.id+'">Delete</button>' +
+    '</div>' +
+    '<p class="ledger-legend">Green = they owe ENZO &middot; Rust = ENZO owes them</p>' +
+    '<div class="table-wrap">' +
+      '<table class="ledger-table">' +
+        '<thead><tr><th>Date</th><th>Description</th><th class="num">Debit</th><th class="num">Credit</th><th class="num">Balance</th><th></th></tr></thead>' +
+        '<tbody>' +
+          '<tr class="opening-row"><td>—</td><td>Opening Balance</td><td class="num"></td><td class="num"></td>' +
+            '<td class="num mono '+(p.openingBalance>0?'pos':p.openingBalance<0?'neg':'')+'">'+fmtMoney(Math.abs(p.openingBalance))+'</td><td></td></tr>' +
+          rows.map(function(r){
+            return '<tr>' +
+              '<td>'+fmtDate(r.date)+'</td>' +
+              '<td>'+esc(r.desc)+(r.note?'<div class="note">'+esc(r.note)+'</div>':'')+'</td>' +
+              '<td class="num mono">'+(r.delta>0?fmtMoney(r.delta):'')+'</td>' +
+              '<td class="num mono">'+(r.delta<0?fmtMoney(-r.delta):'')+'</td>' +
+              '<td class="num mono '+(r.running>0?'pos':r.running<0?'neg':'')+'">'+fmtMoney(Math.abs(r.running))+'</td>' +
+              '<td class="row-actions"><button type="button" class="icon-btn" data-action="edit-txn" data-id="'+r.txnId+'" title="Edit or delete">Edit</button></td>' +
+            '</tr>';
+          }).join('') +
+        '</tbody>' +
+      '</table>' +
+      (!rows.length ? '<p class="empty">No transactions yet for this party.</p>' : '') +
+    '</div>';
+}
+
+/* ================= Party form ================= */
+function renderPartyForm(id){
+  var existing = id ? PARTIES.find(function(p){ return p.id === id; }) : null;
+  if (id && !existing){ location.hash = '#/parties'; return; }
+  var e = existing || {tags:[], material:'yarn', openingBalance:0, name:''};
+  app.innerHTML =
+    '<div class="view-head"><h2>'+(existing?'Edit Party':'Add Party')+'</h2></div>' +
+    '<form id="party-form" data-id="'+(existing?existing.id:'')+'" class="card form-card">' +
+      '<div class="field"><label class="lbl">Name</label>' +
+        '<input type="text" name="name" required value="'+esc(e.name)+'" autofocus></div>' +
+      '<div class="field"><label class="lbl">Tags</label>' +
+        '<div class="chip-check-group">' +
+          ['supplier','buyer','broker'].map(function(t){
+            return '<label class="chip-check"><input type="checkbox" name="tags" value="'+t+'" '+(e.tags.indexOf(t)!==-1?'checked':'')+'><span>'+cap(t)+'</span></label>';
+          }).join('') +
+        '</div></div>' +
+      '<div class="field"><label class="lbl">Material Dealt In</label>' +
+        '<div class="chip-check-group">' +
+          ['yarn','fabric','both'].map(function(m){
+            return '<label class="chip-check"><input type="radio" name="material" value="'+m+'" '+(e.material===m?'checked':'')+'><span>'+cap(m)+'</span></label>';
+          }).join('') +
+        '</div></div>' +
+      '<div class="field"><label class="lbl">Opening Balance</label>' +
+        '<input type="number" name="openingBalance" step="any" value="'+(e.openingBalance!=null?e.openingBalance:0)+'">' +
+        '<p class="hint">Positive = they already owe ENZO. Negative = ENZO already owes them.</p></div>' +
+      '<div class="modal-actions">' +
+        '<a class="btn btn-ghost" href="'+(existing?'#/party/'+existing.id:'#/parties')+'">Cancel</a>' +
+        '<div><button type="submit" class="btn btn-primary">Save Party</button></div>' +
+      '</div>' +
+    '</form>';
+}
+
+/* ================= Transaction dialogs ================= */
+function partyOptions(tag, selected){
+  var list = PARTIES.slice().sort(function(a,b){ return a.name.localeCompare(b.name); });
+  if (tag) list = list.filter(function(p){ return p.tags.indexOf(tag) !== -1; });
+  if (!list.length) return '<option value="" disabled selected>No matching parties — add one first</option>';
+  return '<option value="">Select…</option>' + list.map(function(p){
+    return '<option value="'+p.id+'" '+(p.id===selected?'selected':'')+'>'+esc(p.name)+'</option>';
+  }).join('');
+}
+function purchaseSaleFormHtml(type, existing, prefillPartyId){
+  var isSale = type === 'sale';
+  var partyTag = isSale ? 'buyer' : 'supplier';
+  var partyLabel = isSale ? 'Buyer' : 'Supplier';
+  var e = existing || {};
+  var brokerChecked = !!e.brokerId;
+  var amt = (e.qty && e.rate) ? e.qty * e.rate : 0;
+  return '<form id="txn-form" data-type="'+type+'" data-id="'+(e.id||'')+'">' +
+    '<h3 class="modal-title">'+(e.id?'Edit':'New')+' '+(isSale?'Sale':'Purchase')+'</h3>' +
+    '<div class="field"><label class="lbl">'+partyLabel+'</label>' +
+      '<select name="partyId" required>'+partyOptions(partyTag, e.partyId || prefillPartyId)+'</select></div>' +
+    '<div class="row-2">' +
+      '<div class="field"><label class="lbl">Material</label>' +
+        '<select name="material" required>' +
+          '<option value="yarn" '+(e.material==='yarn'?'selected':'')+'>Yarn</option>' +
+          '<option value="fabric" '+(e.material==='fabric'?'selected':'')+'>Fabric</option>' +
+        '</select></div>' +
+      '<div class="field"><label class="lbl">Date</label>' +
+        '<input type="date" name="date" required value="'+(e.date||todayStr())+'"></div>' +
+    '</div>' +
+    '<div class="row-3">' +
+      '<div class="field"><label class="lbl">Qty</label>' +
+        '<input type="number" name="qty" min="0.01" step="any" required value="'+(e.qty!=null?e.qty:'')+'"></div>' +
+      '<div class="field"><label class="lbl">Unit</label>' +
+        '<input type="text" name="unit" list="units-list" required value="'+esc(e.unit||'kg')+'"></div>' +
+      '<div class="field"><label class="lbl">Rate (per unit)</label>' +
+        '<input type="number" name="rate" min="0" step="any" required value="'+(e.rate!=null?e.rate:'')+'"></div>' +
+    '</div>' +
+    '<datalist id="units-list"><option value="kg"><option value="meters"><option value="yards"><option value="bags"><option value="bales"><option value="pieces"></datalist>' +
+    '<div class="field amount-preview"><label class="lbl">Amount</label><div class="mono amount-out" id="amount-out">'+fmtMoney(amt)+'</div></div>' +
+    '<div class="field"><label class="chk"><input type="checkbox" name="useBroker" '+(brokerChecked?'checked':'')+'> Routed through a broker</label></div>' +
+    '<div class="row-2 broker-fields" style="'+(brokerChecked?'':'display:none')+'">' +
+      '<div class="field"><label class="lbl">Broker</label><select name="brokerId">'+partyOptions('broker', e.brokerId)+'</select></div>' +
+      '<div class="field"><label class="lbl">Commission owed</label><input type="number" name="commission" min="0" step="any" value="'+(e.commission!=null?e.commission:'')+'"></div>' +
+    '</div>' +
+    '<div class="field"><label class="lbl">Note</label><input type="text" name="note" value="'+esc(e.note||'')+'" placeholder="Optional"></div>' +
+    modalActions(e.id) +
+  '</form>';
+}
+function paymentFormHtml(existing, prefillPartyId){
+  var e = existing || {};
+  var dir = e.direction || 'in';
+  return '<form id="txn-form" data-type="payment" data-id="'+(e.id||'')+'">' +
+    '<h3 class="modal-title">'+(e.id?'Edit':'Record')+' Payment</h3>' +
+    '<div class="field"><label class="lbl">Party</label><select name="partyId" required>'+partyOptions(null, e.partyId || prefillPartyId)+'</select></div>' +
+    '<div class="field"><label class="lbl">Direction</label>' +
+      '<div class="toggle-group">' +
+        '<button type="button" class="toggle-opt'+(dir==='in'?' active':'')+'" data-action="toggle-direction" data-val="in">Received from party</button>' +
+        '<button type="button" class="toggle-opt'+(dir==='out'?' active':'')+'" data-action="toggle-direction" data-val="out">Paid to party</button>' +
+      '</div>' +
+      '<input type="hidden" name="direction" value="'+dir+'"></div>' +
+    '<div class="row-2">' +
+      '<div class="field"><label class="lbl">Amount</label><input type="number" name="amount" min="0.01" step="any" required value="'+(e.amount!=null?e.amount:'')+'"></div>' +
+      '<div class="field"><label class="lbl">Date</label><input type="date" name="date" required value="'+(e.date||todayStr())+'"></div>' +
+    '</div>' +
+    '<div class="field"><label class="lbl">Note</label><input type="text" name="note" value="'+esc(e.note||'')+'" placeholder="Optional"></div>' +
+    modalActions(e.id) +
+  '</form>';
+}
+function routedFormHtml(existing, prefillPartyId){
+  var e = existing || {};
+  var payerPre = e.payerId, receiverPre = e.receiverId;
+  if (!e.id && prefillPartyId){
+    var pp = PARTIES.find(function(x){ return x.id === prefillPartyId; });
+    if (pp && pp.tags.indexOf('buyer') !== -1) payerPre = prefillPartyId;
+    else if (pp && pp.tags.indexOf('supplier') !== -1) receiverPre = prefillPartyId;
+  }
+  return '<form id="txn-form" data-type="routed_payment" data-id="'+(e.id||'')+'">' +
+    '<h3 class="modal-title">'+(e.id?'Edit':'Route')+' Payment</h3>' +
+    '<p class="hint">A buyer pays a supplier/trader directly — both ledgers update from this one entry.</p>' +
+    '<div class="row-2">' +
+      '<div class="field"><label class="lbl">Payer (Buyer)</label><select name="payerId" required>'+partyOptions('buyer', payerPre)+'</select></div>' +
+      '<div class="field"><label class="lbl">Receiver (Supplier)</label><select name="receiverId" required>'+partyOptions('supplier', receiverPre)+'</select></div>' +
+    '</div>' +
+    '<div class="row-2">' +
+      '<div class="field"><label class="lbl">Amount</label><input type="number" name="amount" min="0.01" step="any" required value="'+(e.amount!=null?e.amount:'')+'"></div>' +
+      '<div class="field"><label class="lbl">Date</label><input type="date" name="date" required value="'+(e.date||todayStr())+'"></div>' +
+    '</div>' +
+    '<div class="field"><label class="lbl">Note</label><input type="text" name="note" value="'+esc(e.note||'')+'" placeholder="Optional"></div>' +
+    modalActions(e.id) +
+  '</form>';
+}
+function modalActions(existingId){
+  return '<div class="modal-actions">' +
+    (existingId ? '<button type="button" class="btn btn-ghost" data-action="delete-txn" data-id="'+existingId+'">Delete</button>' : '<span></span>') +
+    '<div><button type="button" class="btn btn-ghost" data-action="close-modal">Cancel</button><button type="submit" class="btn btn-primary">Save</button></div>' +
+  '</div>';
+}
+function openTxnDialog(type, existing, prefillPartyId){
+  var dlg = document.getElementById('txn-dialog');
+  var body = document.getElementById('txn-dialog-body');
+  var builders = {
+    purchase: function(){ return purchaseSaleFormHtml('purchase', existing, prefillPartyId); },
+    sale: function(){ return purchaseSaleFormHtml('sale', existing, prefillPartyId); },
+    payment: function(){ return paymentFormHtml(existing, prefillPartyId); },
+    routed_payment: function(){ return routedFormHtml(existing, prefillPartyId); }
+  };
+  body.innerHTML = builders[type]();
+  if (typeof dlg.showModal === 'function') dlg.showModal(); else dlg.setAttribute('open','');
+}
+function closeModal(){
+  document.querySelectorAll('dialog[open]').forEach(function(d){
+    if (d.close) d.close(); else d.removeAttribute('open');
+  });
+}
+
+/* ================= Submit handlers ================= */
+async function handleTxnSubmit(form){
+  var type = form.dataset.type;
+  var id = form.dataset.id || uid();
+  var fd = new FormData(form);
+  var date = fd.get('date');
+  var note = (fd.get('note') || '').trim();
+  var txn = { id:id, type:type, date:date, note:note, createdAt: Date.now() };
+
+  if (type === 'purchase' || type === 'sale'){
+    var partyId = fd.get('partyId');
+    var material = fd.get('material');
+    var qty = parseFloat(fd.get('qty'));
+    var unit = (fd.get('unit') || '').trim();
+    var rate = parseFloat(fd.get('rate'));
+    if (!partyId) return alert('Select a party.');
+    if (!(qty > 0)) return alert('Quantity must be greater than 0.');
+    if (!(rate >= 0)) return alert('Rate must be 0 or more.');
+    if (!unit) return alert('Enter a unit.');
+    var useBroker = fd.get('useBroker') === 'on';
+    var brokerId = null, commission = null;
+    if (useBroker){
+      brokerId = fd.get('brokerId');
+      commission = parseFloat(fd.get('commission'));
+      if (!brokerId) return alert('Select a broker or uncheck the broker option.');
+      if (brokerId === partyId) return alert('Broker must be a different party.');
+      if (!(commission >= 0)) commission = 0;
+    }
+    Object.assign(txn, {partyId:partyId, material:material, qty:qty, unit:unit, rate:rate, amount: qty*rate, brokerId:brokerId, commission:commission});
+  } else if (type === 'payment'){
+    var pPartyId = fd.get('partyId');
+    var direction = fd.get('direction');
+    var amount = parseFloat(fd.get('amount'));
+    if (!pPartyId) return alert('Select a party.');
+    if (!(amount > 0)) return alert('Amount must be greater than 0.');
+    Object.assign(txn, {partyId:pPartyId, direction:direction, amount:amount});
+  } else if (type === 'routed_payment'){
+    var payerId = fd.get('payerId');
+    var receiverId = fd.get('receiverId');
+    var rAmount = parseFloat(fd.get('amount'));
+    if (!payerId || !receiverId) return alert('Select both payer and receiver.');
+    if (payerId === receiverId) return alert('Payer and receiver must be different parties.');
+    if (!(rAmount > 0)) return alert('Amount must be greater than 0.');
+    Object.assign(txn, {payerId:payerId, receiverId:receiverId, amount:rAmount});
+  }
+
+  await idbPut('transactions', txn);
+  await reloadAll();
+  closeModal();
+  route();
+}
+async function handlePartySubmit(form){
+  var fd = new FormData(form);
+  var id = form.dataset.id || uid();
+  var name = (fd.get('name') || '').trim();
+  if (!name) return alert('Enter a party name.');
+  var tags = fd.getAll('tags');
+  if (!tags.length) return alert('Select at least one tag (Supplier / Buyer / Broker).');
+  var material = fd.get('material');
+  var openingBalance = parseFloat(fd.get('openingBalance')) || 0;
+  var party = { id:id, name:name, tags:tags, material:material, openingBalance:openingBalance, createdAt: Date.now() };
+  await idbPut('parties', party);
+  await reloadAll();
+  location.hash = '#/party/' + id;
+}
+
+/* ================= Backup / Restore ================= */
+function exportBackup(){
+  var data = { exportedAt: new Date().toISOString(), parties: PARTIES, transactions: TXNS };
+  var blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'enzo-ledger-backup-' + todayStr() + '.json';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+/* ================= Event delegation ================= */
+document.addEventListener('click', async function(ev){
+  var target = ev.target;
+  if (target.tagName === 'DIALOG'){ target.close && target.close(); return; }
+  var btn = target.closest('[data-action]');
+  if (!btn) return;
+  var action = btn.dataset.action;
+
+  switch (action){
+    case 'open-purchase': openTxnDialog('purchase', null, btn.dataset.party); break;
+    case 'open-sale': openTxnDialog('sale', null, btn.dataset.party); break;
+    case 'open-payment': openTxnDialog('payment', null, btn.dataset.party); break;
+    case 'open-routed': openTxnDialog('routed_payment', null, btn.dataset.party); break;
+    case 'open-backup': document.getElementById('backup-dialog').showModal(); break;
+    case 'export-backup': exportBackup(); break;
+    case 'close-modal': closeModal(); break;
+
+    case 'edit-txn': {
+      var t = TXNS.find(function(x){ return x.id === btn.dataset.id; });
+      if (t) openTxnDialog(t.type, t);
+      break;
+    }
+    case 'delete-txn': {
+      if (confirm('Delete this ledger entry? This cannot be undone.')){
+        await idbDelete('transactions', btn.dataset.id);
+        await reloadAll();
+        closeModal();
+        route();
+      }
+      break;
+    }
+    case 'delete-party': {
+      var pid = btn.dataset.id;
+      if (partyInUse(pid)){ alert('This party has ledger entries linked to it. Remove or reassign those entries before deleting the party.'); break; }
+      if (confirm('Delete this party? This cannot be undone.')){
+        await idbDelete('parties', pid);
+        await reloadAll();
+        location.hash = '#/parties';
+      }
+      break;
+    }
+    case 'toggle-filter-tag': {
+      var tg = btn.dataset.tag;
+      if (uiState.tagFilter.has(tg)) uiState.tagFilter.delete(tg); else uiState.tagFilter.add(tg);
+      btn.classList.toggle('active');
+      updatePartyRows();
+      break;
+    }
+    case 'set-material-filter': {
+      uiState.materialFilter = btn.dataset.val;
+      Array.prototype.forEach.call(btn.parentElement.querySelectorAll('.chip'), function(c){ c.classList.remove('active'); });
+      btn.classList.add('active');
+      updatePartyRows();
+      break;
+    }
+    case 'toggle-direction': {
+      var group = btn.closest('.toggle-group');
+      Array.prototype.forEach.call(group.querySelectorAll('.toggle-opt'), function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      var hidden = group.parentElement.querySelector('input[name="direction"]');
+      if (hidden) hidden.value = btn.dataset.val;
+      break;
+    }
+  }
+});
+
+document.addEventListener('change', function(ev){
+  if (ev.target.name === 'useBroker'){
+    var fields = ev.target.closest('form').querySelector('.broker-fields');
+    if (fields) fields.style.display = ev.target.checked ? '' : 'none';
+  }
+});
+document.addEventListener('input', function(ev){
+  if (ev.target.name === 'qty' || ev.target.name === 'rate'){
+    var form = ev.target.closest('form');
+    if (!form) return;
+    var q = parseFloat(form.qty.value) || 0;
+    var r = parseFloat(form.rate.value) || 0;
+    var out = form.querySelector('#amount-out');
+    if (out) out.textContent = fmtMoney(q * r);
+  }
+});
+document.addEventListener('submit', async function(ev){
+  var form = ev.target;
+  if (form.id === 'txn-form'){ ev.preventDefault(); await handleTxnSubmit(form); }
+  else if (form.id === 'party-form'){ ev.preventDefault(); await handlePartySubmit(form); }
+});
+
+document.querySelectorAll('dialog').forEach(function(d){
+  d.addEventListener('click', function(ev){ if (ev.target === d) d.close(); });
+});
+document.getElementById('import-file').addEventListener('change', async function(e){
+  var file = e.target.files[0];
+  if (!file) return;
+  if (!confirm('This will REPLACE all current parties and transactions with the contents of this backup file. Continue?')){ e.target.value=''; return; }
+  try{
+    var text = await file.text();
+    var data = JSON.parse(text);
+    if (!data || !Array.isArray(data.parties) || !Array.isArray(data.transactions)) throw new Error('Not a valid ENZO Ledger backup file.');
+    await idbClear('parties');
+    await idbClear('transactions');
+    for (var i=0;i<data.parties.length;i++) await idbPut('parties', data.parties[i]);
+    for (var j=0;j<data.transactions.length;j++) await idbPut('transactions', data.transactions[j]);
+    await reloadAll();
+    closeModal();
+    alert('Backup restored.');
+    route();
+  } catch(err){
+    alert('Could not import file: ' + err.message);
+  } finally {
+    e.target.value = '';
+  }
+});
+
+/* ================= Init ================= */
+async function reloadAll(){
+  PARTIES = await idbAll('parties');
+  TXNS = await idbAll('transactions');
+}
+(async function init(){
+  db = await idbOpen();
+  await reloadAll();
+  route();
+})();
+
+})();
+</script>
+</body>
+</html>
